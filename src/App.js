@@ -1,11 +1,12 @@
-
-import { useState } from 'react';
-import { nanoid } from 'nanoid';
-import './App.css';
+import { useState, Fragment } from "react";
+import { nanoid } from "nanoid";
+import "./App.css";
+import EditableRow from "./Components/EditableRow";
+import ReadOnlyRow from "./Components/ReadOnlyRow";
 
 const studentStaticData = [
   {
-    id: "s1",
+    id: 1,
     studentName: "Student-1",
     university: "ABC University",
     emailId: "student-1@hotmail.com",
@@ -13,7 +14,7 @@ const studentStaticData = [
     address: "Bangalore-68",
   },
   {
-    id: "s2",
+    id: 2,
     studentName: "Student-2",
     university: "DEF University",
     emailId: "student-1@hotmail.com",
@@ -21,7 +22,7 @@ const studentStaticData = [
     address: "Bangalore-88",
   },
   {
-    id: "s3",
+    id: 3,
     studentName: "Student-3",
     university: "GHI University",
     emailId: "student-3@hotmail.com",
@@ -29,101 +30,139 @@ const studentStaticData = [
     address: "Bangalore-78",
   },
   {
-    id: "s4",
+    id: 4,
     studentName: "Student-4",
     university: "XYZ University",
     emailId: "student-4@hotmail.com",
     phoneNo: 9865327410,
     address: "Bangalore-01",
-  }
+  },
 ];
 
-function App() {
+const App = () => {
   const [studentList, setStudentList] = useState(studentStaticData);
 
-  const [enteredStudentName, setEnteredStudentName] = useState('');
-  const [enteredUniversityName, setEnteredUniversityName] = useState('');
-  const [enteredEmailId, setEnteredEmailId] = useState('');
-  const [enteredPhoneNo, setEnteredPhoneNo] = useState('');
-  const [enteredAddress, setEnteredAddress] = useState('');
+  const [enteredStudentName, setEnteredStudentName] = useState("");
+  const [enteredUniversityName, setEnteredUniversityName] = useState("");
+  const [enteredEmailId, setEnteredEmailId] = useState("");
+  const [enteredPhoneNo, setEnteredPhoneNo] = useState("");
+  const [enteredAddress, setEnteredAddress] = useState("");
 
   const StudentNameChangeHandler = (event) => {
     setEnteredStudentName(event.target.value);
-  }
+  };
   const universityChangeHandler = (event) => {
     setEnteredUniversityName(event.target.value);
-  }
+  };
   const emailChangeHandler = (event) => {
     setEnteredEmailId(event.target.value);
-  }
+  };
   const phoneNoChangeHandler = (event) => {
     setEnteredPhoneNo(event.target.value);
-  }
+  };
   const addressChangeHandler = (event) => {
     setEnteredAddress(event.target.value);
-  }
+  };
 
   const submitHandler = (event) => {
     event.preventDefault();
 
     const studentData = {
+      id: nanoid(),
       studentName: enteredStudentName,
       university: enteredUniversityName,
       emailId: enteredEmailId,
       phoneNo: enteredPhoneNo,
-      address: enteredAddress
+      address: enteredAddress,
     };
 
-    setEnteredStudentName('');
-    setEnteredUniversityName('');
-    setEnteredPhoneNo('');
-    setEnteredEmailId('');
-    setEnteredAddress('');
-    
+    setEnteredStudentName("");
+    setEnteredUniversityName("");
+    setEnteredPhoneNo("");
+    setEnteredEmailId("");
+    setEnteredAddress("");
+
     const newStudentData = [...studentList, studentData];
     setStudentList(newStudentData);
-
-    // setStudentList((prevStudent) => {
-    //   return [event, ...prevStudent];
-    // });
     console.log(studentData);
   };
 
+  const [editStudentName, setEditStudentName] = useState('');
+  const [editUniversityName, setEditUniversityName] = useState('');
+  const [editEmailId, setEditEmailId] = useState('');
+  const [editPhoneNo, setEditPhoneNo] = useState('');
+  const [editAddress, setEditAddress] = useState('');
+
+  const editStudentNameHandler = (event) => {
+    setEditStudentName(event.target.value);
+  };
+  const editUniversityNameHandler = (event) => {
+    setEditUniversityName(event.target.value);
+  };
+  const editEmailIdHandler = (event) => {
+    setEditEmailId(event.target.value);
+  };
+  const editPhoneNoHandler = (event) => {
+    setEditPhoneNo(event.target.value);
+  };
+  const editAddressHandler = (event) => {
+    setEditAddress(event.target.value);
+  };
+
+  const [editStudentId, setEditStudentId] = useState(null);
+
+  const editClickHandler = (event, student) => {
+    event.preventDefault();
+    const editStudentData = {
+      id: nanoid(),
+      studentName: editStudentName,
+      university: editUniversityName,
+      emailId: editEmailId,
+      phoneNo: editPhoneNo,
+      address: editAddress,
+    };
+
+    setEditStudentName('');
+    setEditUniversityName('');
+    setEditEmailId('');
+    setEditPhoneNo('');
+    setEditAddress('');
+    setEditStudentId(student.id);
+    console.log("clicked");
+
+  }
   return (
     <div className="app-container">
       React-Student App-Practice
-        <table>
-          <thead>
-            <tr>
-              <th>Student Name</th>
-              <th>University Name</th>
-              <th>Email Id</th>
-              <th>Phone Number</th>
-              <th>Address</th>
-            </tr>
-          </thead>
-          <tbody>
-            {studentList.map((event) => (
-              <tr>  
-              <td>{event.studentName}</td>
-              <td>{event.university}</td>
-              <td>{event.emailId}</td>
-              <td>{event.phoneNo}</td>
-              <td>{event.address}</td>
-            </tr>
-            ))
-            }
-          </tbody>          
-        </table>
-        <h2>Add New Student</h2>
-        <form onSubmit={submitHandler}>
+      <table>
+        <thead>
+          <tr>
+            <th>Student Id</th>
+            <th>Student Name</th>
+            <th>University Name</th>
+            <th>Email Id</th>
+            <th>Phone Number</th>
+            <th>Address</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {studentList.map((student) => (
+            <Fragment>
+              { editStudentId === student.id ? (<EditableRow />):(<ReadOnlyRow student={student} editClickHandler={editClickHandler}/>)}
+            </Fragment>
+          ))}
+        </tbody>
+      </table>
+      <h2>Add New Student</h2>
+      <form onSubmit={submitHandler}>
         <div>
           <label>Student Name:</label>
           <input
             type="text"
             name="studentName"
             required="required"
-            placeholder="Enter Student Name"            
+            placeholder="Enter Student Name"
             value={enteredStudentName}
             onChange={StudentNameChangeHandler}
           />
@@ -132,9 +171,9 @@ function App() {
           <label>University Name:</label>
           <input
             type="text"
-            name='university'
-            required='required'
-            placeholder="Enter University Name"            
+            name="university"
+            required="required"
+            placeholder="Enter University Name"
             value={enteredUniversityName}
             onChange={universityChangeHandler}
           />
@@ -143,8 +182,8 @@ function App() {
           <label>Email Id:</label>
           <input
             type="email"
-            name='emailId'
-            placeholder="Enter an email Id"            
+            name="emailId"
+            placeholder="Enter an email Id"
             value={enteredEmailId}
             onChange={emailChangeHandler}
           />
@@ -153,9 +192,9 @@ function App() {
           <label>Phone No:</label>
           <input
             type="number"
-            name='phoneNo'
-            required='required'
-            placeholder="Enter a contact no"            
+            name="phoneNo"
+            required="required"
+            placeholder="Enter a contact no"
             value={enteredPhoneNo}
             onChange={phoneNoChangeHandler}
           />
@@ -164,14 +203,14 @@ function App() {
           <label>Address:</label>
           <input
             type="text"
-            name='address'
-            placeholder="Enter an address"            
+            name="address"
+            placeholder="Enter an address"
             value={enteredAddress}
             onChange={addressChangeHandler}
           />
         </div>
-        <button type='submit'>Add Student</button>
-        </form>
+        <button type="submit">Add Student</button>
+      </form>
     </div>
   );
 }
